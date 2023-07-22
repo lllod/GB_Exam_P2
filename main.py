@@ -1,9 +1,6 @@
 from controller import notes_controller
 
-add_text = 'Новосибирск, как один из крупнейших городов России, сталкивается с различными социальными и \n' \
-           'здравоохранительными проблемами. Одной из таких проблем является увеличивающееся число жирных горожан. \n' \
-           'Ожирение стало серьезной глобальной проблемой, и Новосибирск не исключение.'
 
-notes = notes_controller.NotesController()
-notes.main()
-
+if __name__ == '__main__':
+    notes = notes_controller.NotesController()
+    notes.main()

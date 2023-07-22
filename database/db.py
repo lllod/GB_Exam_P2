@@ -3,67 +3,71 @@ from datetime import date
 
 
 class DataBase:
-    @staticmethod
-    def create_db():
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('''CREATE TABLE IF NOT EXISTS notes (
+    def __init__(self):
+        self.__db_cursor = None
+        self.__current_date = str(date.today())
+
+    def create_db(self) -> None:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('''CREATE TABLE IF NOT EXISTS notes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            create_date TEXT NOT NULL,
-            note_text TEXT NOT NULL)''')
+            note_title TEXT NOT NULL,
+            note_text TEXT NOT NULL,
+            date TEXT NOT NULL)''')
 
-    @staticmethod
-    def add_db_note(text: str):
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_cursor = db_connect.cursor()
-            current_date = str(date.today())
-            db_cursor.execute('INSERT INTO notes (note_text, create_date) VALUES (?, ?)', (text, current_date))
+    def add_db_note(self, title: str, text: str) -> None:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('INSERT INTO notes (note_title, note_text, date) VALUES (?, ?, ?)',
+                                   (title, text, self.__current_date))
 
-    @staticmethod
-    def editing_db_note(note_id: int, text: str):
-        data = (text, note_id)
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('UPDATE notes SET note_text = ? WHERE id = ?', data)
+    def editing_db_note(self, note_id: int, title: str, text: str) -> None:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('UPDATE notes SET note_title = ?, note_text = ?, date = ? '
+                                   'WHERE id = ?', (title, text, self.__current_date, note_id))
 
-    @staticmethod
-    def delete_db_note(note_id: int):
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('DELETE FROM notes WHERE id = ?', (note_id, ))
+    def delete_db_note(self, note_id: int) -> None:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('DELETE FROM notes WHERE id = ?', (note_id,))
 
-    @staticmethod
-    def show_db_all_notes():
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_connect.row_factory = sqlite3.Row
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('SELECT id, note_text, create_date FROM notes')
-            for result in db_cursor:
-                print(result['id'], result['note_text'], result['create_date'])
+    def show_db_all_notes(self) -> list:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.db_connect.row_factory = sqlite3.Row
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('SELECT id, note_title, note_text, date FROM notes')
+            return [[result['id'], result['note_title'], result['note_text'], result['date']] for result in
+                    self.__db_cursor]
 
-    @staticmethod
-    def show_db_all_notes_sorted():
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_connect.row_factory = sqlite3.Row
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('SELECT id, note_text, create_date FROM notes ORDER BY create_date')
-            for result in db_cursor:
-                print(result['id'], result['note_text'], result['create_date'])
+    def show_db_all_notes_sorted(self) -> list:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.db_connect.row_factory = sqlite3.Row
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('SELECT id, note_title, note_text, date FROM notes ORDER BY date')
+            return [[result['id'], result['note_title'], result['note_text'], result['date']] for result in
+                    self.__db_cursor]
 
-    @staticmethod
-    def show_db_all_notes_sorted_desc():
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_connect.row_factory = sqlite3.Row
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('SELECT id, note_text, create_date FROM notes ORDER BY create_date DESC')
-            for result in db_cursor:
-                print(result['id'], result['note_text'], result['create_date'])
+    def show_db_all_notes_sorted_desc(self) -> list:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.db_connect.row_factory = sqlite3.Row
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('SELECT id, note_title, note_text, date FROM notes ORDER BY date DESC')
+            return [[result['id'], result['note_title'], result['note_text'], result['date']] for result in
+                    self.__db_cursor]
 
-    @staticmethod
-    def read_db_note(note_id: int):
-        with sqlite3.connect('notes.sqlite') as db_connect:
-            db_connect.row_factory = sqlite3.Row
-            db_cursor = db_connect.cursor()
-            db_cursor.execute('SELECT id, note_text, create_date FROM notes WHERE id = ?', (note_id, ))
-            for result in db_cursor:
-                print(result['id'], result['note_text'], result['create_date'])
+    def read_db_note(self, note_id: int) -> list:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.db_connect.row_factory = sqlite3.Row
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('SELECT id, note_title, note_text, date FROM notes WHERE id = ?', (note_id,))
+            return [[result['id'], result['note_title'], result['note_text'], result['date']] for result in
+                    self.__db_cursor]
+
+    def get_id(self) -> list:
+        with sqlite3.connect('notes.sqlite') as self.db_connect:
+            self.db_connect.row_factory = sqlite3.Row
+            self.__db_cursor = self.db_connect.cursor()
+            self.__db_cursor.execute('SELECT id FROM notes')
+            return [result['id'] for result in self.__db_cursor]

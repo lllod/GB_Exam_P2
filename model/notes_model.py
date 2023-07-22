@@ -1,38 +1,33 @@
-# import model.add_notes
-from model import add_notes, read_notes, delete_notes, editing_notes
-# import delete_notes
-# import editing_notes
-# import read_notes
-# import add_notes
+from model import add_note, read_notes, delete_note, editing_note
 
 
 class NotesModel:
     def __init__(self):
-        self.add = add_notes.AddNote()
-        self.read = read_notes.ReadNotes()
-        self.delete = delete_notes.DeleteNote()
-        self.editing = editing_notes.EditingNote()
+        self.__add = add_note.AddNote()
+        self.__read = read_notes.ReadNotes()
+        self.__delete = delete_note.DeleteNote()
+        self.__editing = editing_note.EditingNote()
 
-    def add_note(self, user_text: str):
-        self.add.add_note(user_text)
+    def add_note(self, title: str, text: str) -> None:
+        return self.__add.add_note(title, text)
 
-    def show_notes(self):
-        self.read.show_all_notes()
+    def show_notes(self) -> list:
+        return self.__read.show_all_notes()
 
-    def show_notes_sortedby(self):
-        self.read.show_all_notes_orderby()
+    def show_notes_sortedby(self) -> list:
+        return self.__read.show_all_notes_orderby()
 
-    def show_notes_sortedby_desc(self):
-        self.read.show_all_notes_orderby_desc()
+    def show_notes_sortedby_desc(self) -> list:
+        return self.__read.show_all_notes_orderby_desc()
 
-    def delete_note(self, note_id: int):
-        self.delete.delete_note(note_id)
+    def show_one_note(self, note_id: int) -> list:
+        return self.__read.show_one_note(note_id)
 
-    def editing_note(self, note_id: int, user_text: str):
-        self.editing.editing_note(note_id, user_text)
+    def delete_note(self, note_id: int) -> None:
+        return self.__delete.delete_note(note_id)
 
-    def show_one_note(self, note_id: int):
-        self.read.show_one_note(note_id)
+    def editing_note(self, note_id: int, title: str, text: str) -> None:
+        return self.__editing.editing_note(note_id, title, text)
 
 
 
